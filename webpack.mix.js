@@ -13,8 +13,12 @@ let mix = require('laravel-mix');
 
 mix.js('src/js/main.js', 'public/js/')
    .sass('src/scss/main.scss', 'public/css/')
+   .extract(['bootstrap', 'jquery'])
+   .autoload({'jquery': ['jQuery', '$']})
+   .combine(['public/js/manifest.js', 'public/js/vendor.js', 'public/js/main.js'], 'public/js/app.js')
    .setPublicPath('public/')
-   .setResourceRoot('/');
+   .setResourceRoot('/')
+   .sourceMaps();
 
 // Full API
 // mix.js(src, output);

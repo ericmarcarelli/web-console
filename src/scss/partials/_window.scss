@@ -1,0 +1,62 @@
+main.desktop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    background-image: repeating-linear-gradient(30deg, $silver, $silver 50px, $alto 50px, $alto 100px);
+    background-size: cover;
+}
+
+section.window {
+    width: $windowWidth;
+    max-width: 100%;
+    background: white;
+    color: black;
+    @include breakpoint($bp-992) {
+        position: absolute;
+        border: 2px solid $silver;
+        border-radius: 5px;
+    }
+
+    &.terminal {
+        background: black;
+        color: $green;
+
+        .content {
+            @include breakpoint($bp-992) {
+                height: $windowHeight;
+            }
+        }
+    }
+
+    &.browser {
+        @include breakpoint($bp-992) {
+            width: $windowWidth / 1.5;
+        }
+
+        .content {
+            @include breakpoint($bp-992) {
+                height: $windowHeight * 1.25;
+            }
+        }
+    }
+
+    &.dragging {
+        cursor: grabbing;
+    }
+
+    .bar {
+        font-size: 1rem;
+        padding: 0.5rem;
+        background: $alto;
+        color: black;
+    }
+
+    .content {
+        font-size: 1rem;
+        padding: 0.5rem;
+        overflow: auto;
+    }
+}
