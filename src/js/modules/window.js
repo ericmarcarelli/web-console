@@ -24,6 +24,10 @@ class Window {
 
         this.buildElement();
         this.setupWindowMovement();
+
+        if (this.opts.type == 'terminal') {
+            this.handleCommands();
+        }
     }
 
     /**
@@ -34,8 +38,15 @@ class Window {
         content += this.opts.isMain ? '<h1 class="bar">' : '<h2 class="bar">';
         content += this.opts.title;
         content += this.opts.isMain ? '</h1>' : '</h2>';
+        content += '<div class="content-container">';
         content += '<div class="content">';
         content += this.opts.content;
+        content += '</div>';
+        if (this.opts.type == 'terminal') {
+            content += '<div class="input"><span>' + this.opts.commandPrefix + '</span> ';
+            content += '<input type="text" class="command-line" autofocus>';
+            content += '</div>';
+        }
         content += '</div>';
         content += '</section>';
 
@@ -55,6 +66,12 @@ class Window {
         $(window).on('mousedown', (e) => {
             if ($(e.target).closest('#' + this.id).length) {
                 this.$elm.css('z-index', ORDER_TOP);
+
+                if (this.opts.type == 'terminal') {
+                    setTimeout(() => {
+                        this.$elm.find('.command-line').get(0).focus();
+                    }, 20);
+                }
             }
             else {
                 this.$elm.css('z-index', ORDER_BACK);
@@ -87,6 +104,44 @@ class Window {
             }
         })
     }
+
+    /**
+    * Add HTML content to the window. Scroll content div to the bottom if
+    * in a terminal.
+    * @param content
+    */
+    appendContent(content) {
+        this.$elm.find('.content').append(content);
+        if (this.opts.type == 'terminal') {
+            this.$elm.find('.content-container').scrollTop(this.$elm.find('.content-container').prop('scrollHeight'));
+        }
+    }
+
+    /**
+    * Handle commands entered in terminal windows.
+    */
+    handleCommands() {
+        this.$elm.find('.command-line').keypress((e) => {
+            if (e.which == 13) {
+                var cmd = $.trim($('<div/>').html(this.$elm.find('.command-line').val()).text());
+                this.$elm.find('.command-line').val('');
+                this.appendContent('<div><span>' + this.opts.commandPrefix + '</span> ' + cmd + '</div>');
+
+                if (cmd.substr(0,2) == 'ls') {
+                    this.appendContent('<div>list!</div>');
+                }
+                else if (cmd.substr(0,2) == 'rm') {
+                    this.appendContent('<div>' + cmd + ': Permission denied' + '</div>');
+                }
+                else if (cmd.substr(0,2) == 'cd') {
+                    this.appendContent('<div>' + cmd + ': No such file or directory.' + '</div>');
+                }
+                else if (cmd != '') {
+                    this.appendContent('<div>' + cmd + ': command not found' + '</div>');
+                }
+            }
+        });
+    }
 }
 
 jQuery(document).ready(function() {
@@ -95,13 +150,14 @@ jQuery(document).ready(function() {
         'type' : 'terminal',
         'isMain' : 'true',
         'title' : 'webconsole',
+        'commandPrefix' : 'visitor@ericmarcarelli.com:~$',
         'content' : 'Here there <strong>be</strong> content.'
     });
 
     new Window({
         'parentSelector' : '.desktop',
         'type' : 'browser',
-        'isMain' : 'false',
+        'isMain' : false,
         'title' : 'content',
         'content' : 'Here there <strong>be</strong> content.'
     });

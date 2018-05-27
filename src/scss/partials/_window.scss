@@ -24,7 +24,8 @@ section.window {
         background: black;
         color: $green;
 
-        .content {
+        .content-container {
+            font-family: 'Roboto Mono', monospace;
             @include breakpoint($bp-992) {
                 height: $windowHeight;
             }
@@ -36,7 +37,7 @@ section.window {
             width: $windowWidth / 1.5;
         }
 
-        .content {
+        .content-container {
             @include breakpoint($bp-992) {
                 height: $windowHeight * 1.25;
             }
@@ -54,9 +55,17 @@ section.window {
         color: black;
     }
 
-    .content {
+    .content-container {
         font-size: 1rem;
         padding: 0.5rem;
         overflow: auto;
+
+        .command-line {
+            background: transparent;
+            border: none;
+            color: $green;
+            font-size: 1rem;
+            outline: none;
+        }
     }
 }
