@@ -138,23 +138,61 @@ export default class Window {
     handleCommands() {
         this.$elm.find('.command-line').keypress((e) => {
             if (e.which == 13) {
-                var cmd = $.trim($('<div/>').html(this.$elm.find('.command-line').val()).text());
-                this.$elm.find('.command-line').val('');
-                this.appendContent('<div><span>' + this.opts.commandPrefix + '</span> ' + cmd + '</div>');
-
-                if (cmd.substr(0,2) == 'ls') {
-                    this.appendContent('<div>list!</div>');
-                }
-                else if (cmd.substr(0,2) == 'rm') {
-                    this.appendContent('<div>' + cmd + ': Permission denied' + '</div>');
-                }
-                else if (cmd.substr(0,2) == 'cd') {
-                    this.appendContent('<div>' + cmd + ': No such file or directory.' + '</div>');
-                }
-                else if (cmd != '') {
-                    this.appendContent('<div>' + cmd + ': command not found' + '</div>');
-                }
+                this.parseCommand();
             }
         });
     }
+
+    /**
+    * Parse commands entered in terminal windows.
+    * This is separated from handleCommands so it can easily be called automatically.
+    */
+    parseCommand() {
+        var cmd = $.trim($('<div/>').html(this.$elm.find('.command-line').val()).text());
+        this.$elm.find('.command-line').val('');
+        this.appendContent('<div><span>' + this.opts.commandPrefix + '</span> ' + cmd + '</div>');
+
+        if (cmd.substr(0,2) == 'ls') {
+            this.listContent();
+        }
+        else if (cmd.substr(0,2) == 'rm') {
+            this.appendContent('<div>' + cmd + ': Permission denied' + '</div>');
+        }
+        else if (cmd.substr(0,2) == 'cd') {
+            this.appendContent('<div>' + cmd + ': No such file or directory.' + '</div>');
+        }
+        else if (cmd != '') {
+            this.appendContent('<div>' + cmd + ': command not found' + '</div>');
+        }
+    }
+
+    /**
+    * List content and prepare automatic command submission on click.
+    */
+    listContent() {
+        var links = [];
+
+        var content = '<pre>';
+        for (var item of window.opts.directory) {
+            let linkId = uuid.v4();
+            content += '<a href="#" id="' + linkId + '">' + item.filename + '</a>\t';
+            links.push({
+                'linkId' : linkId,
+                'filename' : item.filename
+            });
+        }
+        content += '</pre>';
+        this.appendContent(content);
+
+        for (var link of links) {
+            (function(win, link) {
+                $('#' + link.linkId).click((e) => {
+                    e.preventDefault();
+                    win.$elm.find('.command-line').val('open ' + link.filename);
+                    win.parseCommand();
+                });
+            })(this, link);
+        }
+    }
+    
 }

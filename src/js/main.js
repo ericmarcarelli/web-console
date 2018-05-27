@@ -15,12 +15,4 @@ jQuery(document).ready(function() {
         'commandPrefix' : 'visitor@' + window.opts.name + ':~$',
         'content' : content.get('motd')
     });
-
-    // new Window({
-    //     'parentSelector' : '.desktop',
-    //     'type' : 'browser',
-    //     'isMain' : false,
-    //     'title' : 'content',
-    //     'content' : 'Here there <strong>be</strong> content.'
-    // });
 });
