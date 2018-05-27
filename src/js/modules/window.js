@@ -1,5 +1,7 @@
 var uuid = require("uuid");
 
+import ContentLibrary from './content.js';
+
 export const ORDER_TOP = 9999;
 export const ORDER_BACK = 1;
 
@@ -54,6 +56,7 @@ export default class Window {
         $(this.opts.parentSelector).append(content);
 
         this.$elm = $('#' + this.id);
+        this.$elm.css('z-index', ORDER_TOP);
 
         // Initial window position
         if ($(window).width() >= this.$elm.width()) {
@@ -65,19 +68,22 @@ export default class Window {
             });
         }
 
-        // Bring window to front and focus on mouse down
+        // Bring window to front and focus for command entry
         $(window).on('mousedown', (e) => {
             if ($(e.target).closest('#' + this.id).length) {
                 this.$elm.css('z-index', ORDER_TOP);
-
+            }
+            else {
+                this.$elm.css('z-index', ORDER_BACK);
+            }
+        });
+        $(window).on('mouseup', (e) => {
+            if ($(e.target).closest('#' + this.id).length) {
                 if (this.opts.type == 'terminal') {
                     setTimeout(() => {
                         this.$elm.find('.command-line').get(0).focus();
                     }, 20);
                 }
-            }
-            else {
-                this.$elm.css('z-index', ORDER_BACK);
             }
         });
 
@@ -155,6 +161,9 @@ export default class Window {
         if (cmd.substr(0,2) == 'ls') {
             this.listContent();
         }
+        else if (cmd.substr(0,4) == 'open') {
+            this.openContent(cmd.substr(5, cmd.length - 4));
+        }
         else if (cmd.substr(0,2) == 'rm') {
             this.appendContent('<div>' + cmd + ': Permission denied' + '</div>');
         }
@@ -194,5 +203,30 @@ export default class Window {
             })(this, link);
         }
     }
-    
+
+    /**
+    * Open content based on its type.
+    */
+    openContent(filename) {
+        let content = new ContentLibrary();
+        for (var item of window.opts.directory) {
+            if (item.filename == filename) {
+                if (item.type == 'browser') {
+                    new Window({
+                        'parentSelector' : '.desktop',
+                        'type' : 'browser',
+                        'isMain' : false,
+                        'title' : item.title,
+                        'content' : content.get(filename)
+                    });
+                }
+                else if (item.type == 'show') {
+                    this.appendContent(content.get(filename));
+                }
+                return;
+            }
+        }
+
+        this.appendContent('<div>open ' + filename + ': No such file or directory.' + '</div>');
+    }
 }
