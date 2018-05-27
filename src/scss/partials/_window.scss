@@ -68,4 +68,16 @@ section.window {
             outline: none;
         }
     }
+
+    .close {
+        background-image: url('../images/close.svg');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        z-index: 99;
+        cursor: pointer;
+    }
 }

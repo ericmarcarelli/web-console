@@ -35,6 +35,7 @@ class Window {
     */
     buildElement() {
         var content = '<section class="window ' + this.opts.type + '" id="' + this.id + '">';
+        content += '<i class="close"></i>';
         content += this.opts.isMain ? '<h1 class="bar">' : '<h2 class="bar">';
         content += this.opts.title;
         content += this.opts.isMain ? '</h1>' : '</h2>';
@@ -54,6 +55,7 @@ class Window {
 
         this.$elm = $('#' + this.id);
 
+        // Initial window position
         if ($(window).width() >= this.$elm.width()) {
             let top = ($(window).height() - this.$elm.height()) / 2;
             let left = ($(window).width() - this.$elm.width()) / 2;
@@ -63,6 +65,7 @@ class Window {
             });
         }
 
+        // Bring window to front and focus on mouse down
         $(window).on('mousedown', (e) => {
             if ($(e.target).closest('#' + this.id).length) {
                 this.$elm.css('z-index', ORDER_TOP);
@@ -77,17 +80,29 @@ class Window {
                 this.$elm.css('z-index', ORDER_BACK);
             }
         });
+
+        // Close window. If this is the main window, stubbornly reopen it!
+        this.$elm.find('.close').click((e) => {
+            this.$elm.remove();
+            if (this.opts.isMain) {
+                setTimeout(() => {
+                    new Window(this.opts);
+                }, 1500);
+            }
+        });
     }
 
     /**
     * Window movement
+    * Start dragging with mouse down on the top bar and reposition window
+    * as the mouse moves. End dragging on mouseup.
     */
     setupWindowMovement() {
         this.$elm.find('.bar').on('mousedown', (e) => {
             this.dragging = true;
             this.$elm.addClass('dragging');
-            this.mouseX = e.pageX - this.$elm.offset().left
-            this.mouseY = e.pageY - this.$elm.offset().top
+            this.mouseX = e.pageX - this.$elm.offset().left;
+            this.mouseY = e.pageY - this.$elm.offset().top;
         });
 
         $(window).on('mouseup', (e) => {
