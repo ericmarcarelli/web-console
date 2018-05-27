@@ -3,7 +3,7 @@ var uuid = require("uuid");
 export const ORDER_TOP = 9999;
 export const ORDER_BACK = 1;
 
-class Window {
+export default class Window {
     /**
     * Create new window
     *
@@ -158,22 +158,3 @@ class Window {
         });
     }
 }
-
-jQuery(document).ready(function() {
-    new Window({
-        'parentSelector' : '.desktop',
-        'type' : 'terminal',
-        'isMain' : 'true',
-        'title' : 'webconsole',
-        'commandPrefix' : 'visitor@ericmarcarelli.com:~$',
-        'content' : 'Here there <strong>be</strong> content.'
-    });
-
-    new Window({
-        'parentSelector' : '.desktop',
-        'type' : 'browser',
-        'isMain' : false,
-        'title' : 'content',
-        'content' : 'Here there <strong>be</strong> content.'
-    });
-});

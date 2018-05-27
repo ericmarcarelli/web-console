@@ -7,3 +7,5 @@ public/fonts
 public/images/*.*
 public/images/vendor
 public/mix-manifest.json
+public/projects
+config.php

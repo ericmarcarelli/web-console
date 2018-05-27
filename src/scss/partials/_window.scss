@@ -26,9 +26,25 @@ section.window {
 
         .content-container {
             font-family: 'Roboto Mono', monospace;
+            font-weight: 300;
             @include breakpoint($bp-992) {
                 height: $windowHeight;
+
+                li {
+                    position: relative;
+                    list-style: none;
+                    &:before {
+                        content: "*";
+                        position: absolute;
+                        left: -1rem;
+                    }
+                }
             }
+        }
+
+
+        a {
+            color: $carmine;
         }
     }
 
