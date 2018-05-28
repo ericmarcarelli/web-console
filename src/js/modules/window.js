@@ -181,7 +181,7 @@ export default class Window {
     listContent() {
         var links = [];
 
-        var content = '<pre>';
+        var content = '<div class="listing">';
         for (var item of window.opts.directory) {
             let linkId = uuid.v4();
             content += '<a href="#" id="' + linkId + '">' + item.filename + '</a>\t';
@@ -190,7 +190,7 @@ export default class Window {
                 'filename' : item.filename
             });
         }
-        content += '</pre>';
+        content += '</div>';
         this.appendContent(content);
 
         for (var link of links) {
@@ -250,11 +250,11 @@ export default class Window {
             // When we recursively search the sub items, we'll strip out the
             // prefix, but pass it as the third parameter so we can stich it back
             // together later to build the content div's id.
-            if (item.subItems) {
+            if (item.items) {
                 let prefix = item.filename + '-';
                 if (filename.length > prefix.length && filename.substr(0, prefix.length) == prefix) {
                     let subFilename = filename.substr(prefix.length, filename.length - prefix.length)
-                    if (this.recursivelyFindContent(subFilename, item.subItems, prefix)) {
+                    if (this.recursivelyFindContent(subFilename, item.items, prefix)) {
                         return true;
                     }
                 }
