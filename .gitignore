@@ -4,8 +4,7 @@ content
 public/js
 public/css
 public/fonts
-public/images/*.*
-public/images/vendor
+public/images/
 public/mix-manifest.json
 public/projects
 config.php

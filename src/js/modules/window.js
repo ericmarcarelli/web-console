@@ -59,7 +59,7 @@ export default class Window {
         this.$elm.css('z-index', ORDER_TOP);
 
         // Initial window position
-        if ($(window).width() >= this.$elm.width()) {
+        if ($(window).width() >= 992) {
             let top = ($(window).height() - this.$elm.height()) / 2;
             let left = ($(window).width() - this.$elm.width()) / 2;
             this.$elm.css({
@@ -208,25 +208,59 @@ export default class Window {
     * Open content based on its type.
     */
     openContent(filename) {
+        if (this.recursivelyFindContent(filename, window.opts.directory, '')) {
+            return;
+        }
+
+        this.appendContent('<div>open ' + filename + ': No such file or directory.' + '</div>');
+    }
+
+    /**
+    * Find content by "filename" in the directory.
+    * @param filename
+    * @param list
+    * @param prefix
+    */
+    recursivelyFindContent(filename, list, prefix) {
         let content = new ContentLibrary();
-        for (var item of window.opts.directory) {
+
+        for (var item of list) {
             if (item.filename == filename) {
                 if (item.type == 'browser') {
-                    new Window({
+                    let win = new Window({
                         'parentSelector' : '.desktop',
                         'type' : 'browser',
                         'isMain' : false,
                         'title' : item.title,
-                        'content' : content.get(filename)
+                        'content' : content.get(prefix + filename)
+                    });
+
+                    win.$elm.find('a.open-window').click((e) => {
+                        win.openContent($(e.currentTarget).data('file'));
+                        e.preventDefault();
                     });
                 }
                 else if (item.type == 'show') {
-                    this.appendContent(content.get(filename));
+                    this.appendContent(content.get(prefix + filename));
                 }
-                return;
+
+                return true;
+            }
+
+            // When we recursively search the sub items, we'll strip out the
+            // prefix, but pass it as the third parameter so we can stich it back
+            // together later to build the content div's id.
+            if (item.subItems) {
+                let prefix = item.filename + '-';
+                if (filename.length > prefix.length && filename.substr(0, prefix.length) == prefix) {
+                    let subFilename = filename.substr(prefix.length, filename.length - prefix.length)
+                    if (this.recursivelyFindContent(subFilename, item.subItems, prefix)) {
+                        return true;
+                    }
+                }
             }
         }
 
-        this.appendContent('<div>open ' + filename + ': No such file or directory.' + '</div>');
+        return false;
     }
 }

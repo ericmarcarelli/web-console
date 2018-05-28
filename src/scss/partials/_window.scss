@@ -14,8 +14,11 @@ section.window {
     max-width: 100%;
     background: white;
     color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+
     @include breakpoint($bp-992) {
-        position: absolute;
         border: 2px solid $silver;
         border-radius: 5px;
     }
@@ -55,12 +58,13 @@ section.window {
 
     &.browser {
         @include breakpoint($bp-992) {
-            width: $windowWidth / 1.5;
+            width: $windowWidth / 1.25;
         }
 
         .content-container {
+            padding: 1rem;
             @include breakpoint($bp-992) {
-                height: $windowHeight * 1.25;
+                height: $windowHeight * 1.5;
             }
         }
     }
