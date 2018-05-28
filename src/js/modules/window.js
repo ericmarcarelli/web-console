@@ -154,7 +154,7 @@ export default class Window {
     * This is separated from handleCommands so it can easily be called automatically.
     */
     parseCommand() {
-        var cmd = $.trim($('<div/>').html(this.$elm.find('.command-line').val()).text());
+        var cmd = $.trim($('<div/>').html(this.$elm.find('.command-line').val()).text()).toLowerCase();
         this.$elm.find('.command-line').val('');
         this.appendContent('<div><span>' + this.opts.commandPrefix + '</span> ' + cmd + '</div>');
 
